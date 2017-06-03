@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.9/p5.js"></script>
+<script>
+// F=MxA Force=Mass*Acceleration
+class Ball {
+    constructor() {
+        this.location = createVector(width/2, height/2);
+        this.velocity = createVector(0,0);
+        this.acceleration = createVector(0,0);
+    }
+    applyForce(force) {
+        let copiedForce = force.copy();
+        this.acceleration.add(copiedForce);
+    }
+    update() {
+        this.velocity.add(this.acceleration);
+        this.location.add(this.velocity);
+        this.acceleration.mult(0);
+    }
+    display() {
+        stroke(0);
+        fill(255, 0, 0);
+        ellipse(this.location.x, this.location.y, 16, 16);
+    }
+}
+var b;
+function setup() {
+    createCanvas(720, 360);
+    b = new Ball();
+}
+function draw() {
+    background(220);
+    
+    let mouseVec = createVector(mouseX, mouseY);
+    let centerVec = createVector(width/2, height/2);
+    mouseVec.sub(centerVec);
+    //mouseVec.normalize();
+    //mouseVec.mult(100);
+
+    let fr = mouseVec.copy();
+    fr.normalize();
+    fr.mult(-1*100);
+
+    translate(width/2, height/2);
+    stroke(0,0,255);
+    line(0, 0, mouseVec.x, mouseVec.y);
+    text('vec', mouseVec.x, mouseVec.y);
+
+    stroke(255,0,0);
+    line(0, 0, fr.x, fr.y);
+    text('friction', fr.x, fr.y);
+}
+window.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    return;
+})
+window.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    return;
+})
+</script>
+</body>
+</html>

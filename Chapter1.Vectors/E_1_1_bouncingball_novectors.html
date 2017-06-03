@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>1.1 ベクトル</title>
+</head>
+<body>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.9/p5.js"></script>
+<script>
+function setup() {
+    createCanvas(480, 320);
+    stroke(0);
+    fill(175);
+}
+let x = 0;
+let y = 0;
+let xspeed = 1;
+let yspeed = 3.3;
+function draw() {
+    background(240);
+    x += xspeed;
+    y += yspeed;
+    if (x < 0 || width < x) {
+        xspeed *= -1;
+    }
+    if (y < 0 || height < y) {
+        yspeed *= -1;
+    }
+    ellipse(x, y, 50, 50);
+}
+</script>
+</body>
+</html>

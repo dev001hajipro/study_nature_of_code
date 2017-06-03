@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>I.6 パーリンノイズ</title>
+</head>
+<body>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.9/p5.js"></script>
+<script>
+class Walker {
+    constructor() {
+        this.x = width/2;
+        this.y = height/2;
+        this.tx = 0;
+        this.ty = 10000;
+    }
+    step() {
+        this.x = map(noise(this.tx), 0, 1, 0, width);
+        this.y = map(noise(this.ty), 0, 1, 0, height);
+        this.tx += 0.01;
+        this.ty += 0.01;
+    }
+    show() {
+        stroke(20);
+        fill(200);
+        ellipse(this.x, this.y, 50, 50);
+    }
+}
+function setup() {
+    createCanvas(640, 320);
+    background(240);
+    w = new Walker();
+}
+function draw() {
+    w.step();
+    w.show();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.10/p5.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.10/addons/p5.dom.min.js"></script>
+<script>
+    // https://www.youtube.com/watch?v=BjoM9oKOAKY
+class Particle {
+    constructor() {
+        this.position = createVector(random(width),random(height));
+        this.velocity = createVector(0,0);
+        //this.velocity = p5.Vector.random2D();
+        this.acceleration = createVector(0,0);
+        this.mass = 1;
+        this.maxspeed = 2;
+        // 配列を用意するのではなく、ひとつ前のポジションを覚えていて、ラインを引く
+        this.prevPosition = this.position.copy();
+    }
+    //F=M*A
+    applyForce(force) {
+        if (force) {
+            let f = p5.Vector.div(force, this.mass); // A=F/M
+            this.acceleration.add(f);
+        } else {
+            //console.log(force);
+        }
+    }
+    follow(vectors) {
+        // potision is canvas pixel potision to array element scale.
+        let x = floor(this.position.x / scl);
+        let y = floor(this.position.y / scl);
+        let index = y * cols + x;
+        let force = vectors[index];
+        if (index >= 400) {
+            //console.log(index);
+        }
+        this.applyForce(force);
+    }
+    update() {
+        this.velocity.add(this.acceleration);
+        this.velocity.limit(this.maxspeed);
+        this.position.add(this.velocity);
+        this.acceleration.mult(0);
+    }
+    updatePrev() {
+        this.prevPosition.x = this.position.x;
+        this.prevPosition.y = this.position.y;
+    }
+    display() {
+        stroke(0, 5);
+        strokeWeight(1);
+        //point(this.position.x, this.position.y);
+        line(this.position.x, this.position.y,this.prevPosition.x, this.prevPosition.y);
+        this.updatePrev();
+    }
+    // 座標を強制的に変更するので、このタイミングでupdatePrevも必要。
+    checkEdges() {
+        if (this.position.x > width) {
+            this.position.x = 0;
+            this.updatePrev();
+        }
+        if (this.position.x < 0) {
+            this.position.x = width;
+            this.updatePrev();
+        }
+        if (this.position.y > height) {
+            this.position.y = 0;
+            this.updatePrev();
+        }
+        if (this.position.y < 0) {
+            this.position.y = height;
+            this.updatePrev();
+        }
+    }
+}
+
+const scl = 30; // cell scale.
+const inc = 0.05;
+let cols, rows;
+let fr;
+let zoff = 0.0;
+let particles;
+let flowfield;
+
+function setup() {
+    createCanvas(480, 480);
+    cols = floor(width/scl);
+    rows = floor(height/scl);
+    fr = createP('');
+
+    flowfield = new Array(cols*rows).fill(0);
+    particles = new Array(1500).fill(0).map(n=>new Particle());
+}
+function draw() {
+    //background(255);
+    randomSeed(10);
+    let yoff = 0;
+    for (let y = 0; y < rows; y++) {
+        let xoff = 0;
+        for (let x = 0; x < cols; x++) {
+            let index = cols * y + x;
+            // ベクトルと角度で方向を用意。大きさは考えない。大きさはline関数で別途考慮。
+            let angle = noise(xoff, yoff, zoff) * TWO_PI * 4; // TODO: 何故 TWO_PI?
+            let v = p5.Vector.fromAngle(angle);
+            v.setMag(0.3);
+            flowfield[index] = v;
+            xoff += inc;
+            //rect(x * scl, y * scl, scl, scl);
+            stroke(0, 50);
+            strokeWeight(1);
+            // push();
+            // translate(x * scl, y *scl);
+            // rotate(v.heading());
+            // line(0, 0, scl, 0);
+            // pop();
+        }
+        yoff += inc;
+        zoff += 0.0004;
+    }
+
+    particles.forEach(p=>{
+        p.follow(flowfield);
+        p.update();
+        p.checkEdges();
+        p.display();
+    });
+
+    fr.html(floor(frameRate()));
+}
+</script>
+</body>
+</html>

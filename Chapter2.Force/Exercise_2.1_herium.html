@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.9/p5.js"></script>
+<script>
+class Mover {
+    constructor() {
+        this.location = createVector(width/2, height/2);
+        this.acceleration = createVector(0, 0);
+        this.velocity = createVector(0, 0);
+    }
+    input() {
+    }
+
+    applyForce(f) {
+        this.acceleration.add(f);
+    }
+    
+    update() {
+        /*
+        let mouse = createVector(mouseX, mouseY);
+        let dir = p5.Vector.sub(mouse, this.location);
+        dir.normalize();
+        dir.mult(0.1);
+        this.acceleration = dir;
+        */
+        this.velocity.add(this.acceleration);
+        this.location.add(this.velocity);
+        this.acceleration.mult(0);
+    }
+    show() {
+        stroke(0);
+        fill(255);
+        ellipse(this.location.x, this.location.y, 20, 20);
+    }
+}
+var m;
+function setup() {
+    createCanvas(480, 320);
+    m = new Mover();
+}
+let xoff = 0;
+function draw() {
+    xoff += 0.01;
+    background(220);
+    if (mouseIsPressed) {
+        if (mouseButton==LEFT) {
+            m.applyForce(createVector(-0.1, 0.0));
+        }
+        if (mouseButton==RIGHT) {
+            m.applyForce(createVector(0.1, 0.0));
+        }
+    }
+    let helium = createVector(0.0, -0.01);
+    m.applyForce(helium);
+    let wind = createVector(map(noise(xoff),0,1,-0.05,0.05), 0);
+    m.applyForce(wind);
+
+    if (m.location.y-10 < 0) {
+        let bound = createVector(0.0, 1.0);
+        m.applyForce(bound);
+    }
+
+    m.input();
+    m.update();
+    m.show();
+}
+window.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    return;
+})
+window.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    return;
+})
+</script>
+</body>
+</html>

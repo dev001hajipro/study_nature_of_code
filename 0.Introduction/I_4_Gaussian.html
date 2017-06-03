@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>I.1 ランダムウォーカー</title>
+</head>
+<body>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.9/p5.js"></script>
+<script>
+function setup() {
+    createCanvas(640, 320);
+    background(0);
+}
+function draw() {
+    let sd = 60; // 標準偏差
+    let mean = 320; // 平均
+    /* randomGaussian関数に引数を渡す方法もある。
+    let x = randomGaussian(mean, sd);
+    */
+    let num = randomGaussian();
+    let x = sd * num + mean;
+    noStroke();
+    fill(255, 10);
+    ellipse(x, 180, 16, 16);
+}
+</script>
+</body>
+</html>

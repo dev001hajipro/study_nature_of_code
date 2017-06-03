@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.10/p5.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.10/addons/p5.dom.js"></script>
+<script>
+let G = 0.4;
+class Mover {
+    constructor(m = 1.0, x = 0, y = 0) {
+        this.mass = m;
+        this.position = createVector(x, y);
+        this.velocity = createVector(0, 0);
+        this.acceleration = createVector(0, 0);
+    }
+    applyForce(force) {
+        let f = p5.Vector.div(force, this.mass); // F=M*A, A=F/M
+        this.acceleration.add(f);
+    }
+    update() {
+        this.velocity.add(this.acceleration);
+        this.position.add(this.velocity);
+        this.acceleration.mult(0); //reset
+    }
+    display() {
+        stroke(0);
+        ellipse(this.position.x, this.position.y, this.mass*16, this.mass*16);
+    }
+    attract(m) {
+        // 1.単位ベクトルr^を求める
+        let force = p5.Vector.sub(this.position, m.position);
+        // 2.距離を求める。
+        // あまりちかくなると挙動が変になるためひとまず影響範囲を設定
+        let distance = constrain(force.mag(), 5.0, 25.0);
+        force.normalize(); // 1'
+        // 3.重力加速度の公式に当てはめる
+        // (G * m1 * m2 / r * r ) * r-unit-vector
+        let strength = G * this.mass * m.mass / (distance * distance);
+        force.mult(strength);
+        return force;
+    }
+}
+let movers;
+function setup() {
+    createCanvas(400, 400);
+    movers = new Array(50).fill(0).map(m=>new Mover(1, random(0, width), random(0, height)));
+}
+function draw() {
+    background(240);
+    for (let i = 0, len =movers.length; i < len; i++) {
+        for (let j = 0; j < len; j++) {
+            if (i != j) {
+                let force = movers[j].attract(movers[i]);
+                movers[i].applyForce(force);
+            }
+        }
+        movers[i].update();
+        movers[i].display();
+    }
+}
+</script>
+<p>重力加速度(Gravitational acceleration)</p>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+<p>\(\displaystyle F=\frac{ G m_1 m_2 }{ r^2 }\hat{r} \)</p>
+
+</body>
+</html>

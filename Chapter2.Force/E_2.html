@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.9/p5.js"></script>
+    <script>
+// 力(Force)とは、質量(Mass)をもった物体に加速を生じさせるベクトル
+// 1.静止している物体は静止状態を続け、運動している物体は運動を続ける。(無重力をイメージ)
+// 2.質量(Mass)に加速度(Acceleration)を掛けると力(Force)になる。
+//   F=M*A
+//   A=F/M
+// 3.すべての作用には、大きさが同じで無化が反対の反作用がある。
+//   - 力は必ず対になって発生する。２つの力の強さは等しく、向きは反対である。
+//   - 普通にトラックを押すと、手に力がかかる。
+//   - 凍っている地面でトラックを押すと?、自分の方が質量が軽いので、地面の摩擦がなく、
+//     自分が後ろに押される。
+///
+// 摩擦 ///
+// -1 :摩擦は速度の反対方向
+// v^ :速度の単位ベクトル = velocity.normalize();
+// μ :mu(ミュー) は、摩擦係数を表す。
+// N : 垂直抗力(Normal force)
+// 摩擦の大きさは、μ * N
+// Fベクトル = -1 * μ * N * v^
+////
+// 空気抵抗と流体抵抗 ////
+// Fd = -0.5* ρ * v*v * A * Cd * v^
+// Fd : 抗力(drag force)
+// ρ  : ロー(ρ) rho ひとまずρ=1 流体の密度、係数
+// v  : 物体の速さは、速度ベクトルの大きさ。つまりvelocity.magnitude
+// A  : Aは、液体を押して進む物体の全面の面積
+// Cd : 抗力係数
+// V^ : 速度の単位ベクトル velocity.normalize()
+class Mover {
+    constructor(m = 1, x = 0, y = 0) {
+        this.location = createVector(x, y);
+        this.velocity = createVector(0, 0);
+        this.acceleration = createVector(0, 0);
+        this.mass = m;
+    }
+    applyForce(force) {
+        let copiedForce = force.copy();
+        copiedForce.div(this.mass); // A=F/M
+        this.acceleration.add(copiedForce);　// 力の積算
+    }
+    update() {
+        this.velocity.add(this.acceleration);
+        this.location.add(this.velocity);
+        this.acceleration.mult(0);
+    }
+    display() {
+        stroke(0);
+        fill(255);
+        ellipse(this.location.x, this.location.y, this.mass*16, this.mass*16);
+    }
+    checkEdges() {
+        if (this.location.y > height) {
+            this.velocity.y *= -1;
+            this.location.y = height;
+        }
+        if (this.location.x < 0) {
+            this.velocity.x *= -1;
+            this.location.x = 0;
+        }
+        if (this.location.x > width) {
+            this.velocity.x *= -1;
+            this.location.x = width;
+        }
+    }
+}
+
+class Liquid {
+    constructor(x = 0, y = 0, w = 0, h = 0, Cd = 0) {
+        this.x = x;
+        this.y = y;
+        this.w = w;
+        this.h = h;
+        this.Cd = Cd;
+        console.log('Cd=', this.Cd);
+    }
+    display() {
+        noStroke();
+        fill(0, 255, 255, 50);
+        rect(this.x, this.y, this.w, this.h);
+    }
+    contains(m) {
+        let l = m.location;
+        console.log(l.x > this.x && l.x < this.x + this.w && l.y > this.y && l.y < this.y + this.h);
+        return l.x > this.x && l.x < this.x + this.w && l.y > this.y && l.y < this.y + this.h;
+    }
+    drag(m) {
+        // 空気抵抗
+        // Fd = -0.5* ρ * v*v * A * Cd * v^
+        // -0.5ではなく-1にしている
+        let ρ = 1;
+        let A = 1;
+        let v = m.velocity.mag();
+        let dragMagnitude = ρ * v * v * A * this.Cd;
+        let dragForce = m.velocity.copy();
+        dragForce.mult(-1);
+        dragForce.normalize();
+        dragForce.mult(dragMagnitude);
+        return dragForce;
+    }
+}
+
+let m;
+let movers;
+let liquid;
+function setup() {
+    createCanvas(480, 320);
+    //m = new Mover(random(1,5), width/2, height/2);
+    movers = new Array(2).fill(0).map(n=>new Mover(random(1,5), random(1, 470), 0));
+    liquid = new Liquid(0, height/2, width, height/2, 0.1);
+}
+function draw() {
+    background(240);
+    liquid.display();
+    for (let i = 0, len=movers.length; i < len; i++) {
+        let m = movers[i];
+        // 摩擦
+        let μ = 0.01;
+        let normalForce = 1; // 垂直抗力
+        let frictionMag = μ * normalForce;
+        let friction = m.velocity.copy();
+        friction.mult(-1);
+        friction.normalize();
+        friction.mult(frictionMag);
+        m.applyForce(friction);
+        
+
+        if (liquid.contains(m)) {
+            console.log('drag')
+            let dragForce = liquid.drag(m);
+            m.applyForce(dragForce);
+        }
+
+
+        // applyForce内は、A=F/M。ただし重力は同じため、
+        // 相殺するために重力に*m.massでスケーリング。A=F/M*Mで相殺されて、A=Fになる。
+        let gravity = createVector(0, 0.1 * m.mass);
+        m.applyForce(gravity);
+        //let wind = createVector(0.02, 0);
+        //m.applyForce(wind);
+        m.update();
+        m.display();
+        m.checkEdges();
+    }
+}
+    </script>
+</body>
+</html>

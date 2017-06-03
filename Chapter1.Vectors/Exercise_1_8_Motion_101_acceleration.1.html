@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>1.10 Motion 101(速度とランダムな加速度)</title>
+</head>
+<body>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.9/p5.js"></script>
+<script>
+class Mover {
+    constructor() {
+        this.location = createVector(width/2, height/2);
+        this.velocity = createVector(0,0);
+        this.acceleration = createVector(0,0);
+        this.topspeed = 10;
+    }
+    update() {
+        var mouse = createVector(mouseX, mouseY);
+        var direction = p5.Vector.sub(mouse, this.location);
+        text(direction.mag(), 10 , 10);
+        direction.normalize();
+        direction.mult(direction.mag());
+        //this.acceleration = p5.Vector.random2D(); // 正規化されている
+        //this.acceleration.mult(random(2));
+        this.acceleration = direction;
+        this.velocity.add(this.acceleration);
+        this.location.add(this.velocity);
+
+        this.velocity.limit(this.topspeed);
+    }
+    checkEdges() {
+        if (this.location.x > width) {
+            this.location.x = 0;
+        }
+        if (this.location.x < 0) {
+            this.location.x = width;
+        }
+        if (this.location.y > height) {
+            this.location.y = 0;
+        }
+        if (this.location.y < 0) {
+            this.location.y = height;
+        }
+    }
+    display() {
+        stroke(0);
+        fill(175);
+        ellipse(this.location.x, this.location.y, 50, 50);
+    }
+}
+var mover;
+function setup() {
+    createCanvas(1280, 720);
+    mover = new Mover();
+}
+function draw() {
+    background(240);
+    mover.update();
+    mover.checkEdges();
+    mover.display();
+}
+</script>
+</body>
+</html>

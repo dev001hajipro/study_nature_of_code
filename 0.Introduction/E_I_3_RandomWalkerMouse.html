@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Exercise I.3</title>
+</head>
+<body>
+    <p>マウス方向に50％の確率で移動するランダムウォーカー</p>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.9/p5.js"></script>
+<script>
+class Walker {
+    constructor() {
+        this.x = width/2;
+        this.y = height/2;
+    }
+    step() {
+        let num = random(1);
+        if (num < 0.5) {
+            if (this.x - mouseX < 0) {
+                this.x++;
+            } else {
+                this.x--;
+            }
+            if (this.y - mouseY < 0) {
+                this.y++;
+            } else {
+                this.y--;
+            }
+        } else {
+            let n2 = random(1);
+            if (n2 < 0.25) {
+                this.x++;
+            } else if (n2 < 0.50) {
+                this.x--;
+            } else if (n2 < 0.75) {
+                this.y++;
+            } else {
+                this.y--;
+
+            }
+        }
+    }
+    display() {
+        stroke(0);
+        point(this.x, this.y);
+    }
+}
+var w;
+function setup() {
+    createCanvas(400, 400);
+    w = new Walker();
+    background(220);
+}
+function draw() {
+    //console.log(mouseX, mouseY)
+
+    w.step();
+    w.display();
+}
+</script>
+</body>
+</html>

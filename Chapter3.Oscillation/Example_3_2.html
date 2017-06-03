@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.10/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.10/addons/p5.dom.js"></script>
+</head>
+<body>
+<script>
+class Mover {
+    constructor(mass = 1.0, x = 0, y = 0) {
+        this.mass = mass;
+        this.position = createVector(x, y);
+        this.velocity = createVector(random(-1,1), random(-1, 1));
+        this.acceleration = createVector(0, 0);
+
+        this.angle = 0;
+        this.aVelocity = 0;
+        this.aAcceleration = 0;
+    }
+
+    attract(m) {
+        let r = p5.Vector.sub(this.position, m.position); // 単位ベクトル
+        let distance = r.mag();
+        distance = constrain(distance, 5, 25);
+        let m2 = (G * this.mass * m.mass) / (distance * distance);
+        r.normalize();
+        r.mult(m2);
+        return r;
+    }
+    
+    applyForce(force) {
+        let f = p5.Vector.div(force, this.mass); // F=M*A A=F/M
+        this.acceleration.add(f);
+    }
+
+    update() {
+        this.velocity.add(this.acceleration);
+        this.position.add(this.velocity);
+
+        this.aAcceleration = this.acceleration.x / 10.0;
+        this.aVelocity += this.aAcceleration;
+        this.aVelocity = constrain(this.aVelocity, -0.1, 0.1);
+        this.angle += this.aVelocity;
+
+        this.acceleration.mult(0);
+    }
+
+    display() {
+        push();
+        stroke(0);
+        fill(255, 50);
+        rectMode(CENTER);
+        translate(this.position.x, this.position.y);
+        rotate(this.angle);
+        rect(0, 0, this.mass*16, this.mass*16);
+        strokeWeight(1);
+        point(0, 0);
+        pop();
+    }
+}
+let G = 0.4;
+class Attractor {
+    constructor(m = 1.0, x = 0, y = 0) {
+        this.position = createVector(x, y);
+        this.mass = m;
+    }
+    attract(m) {
+        let r = p5.Vector.sub(this.position, m.position); // 単位ベクトル
+        let distance = r.mag();
+        distance = constrain(distance, 5, 25);
+        let m2 = (G * this.mass * m.mass) / (distance * distance);
+        r.normalize();
+        r.mult(m2);
+        return r;
+    }
+    display() {
+        ellipseMode(CENTER);
+        stroke(0);
+        fill(175, 200);
+        ellipse(this.position.x, this.position.y, this.mass*2, this.mass*2);
+    }
+}
+let movers;
+let attractor;
+function setup() {
+    createCanvas(400, 400);
+    movers = new Array(10).fill(0).map(n=>new Mover(random(1, 5), random(0, width),random(0, height)));
+    attractor = new Attractor(30, width/2, height/2);
+}
+function draw() {
+    background(240);
+    text('t', 10, 10);
+    attractor.display();
+    movers.forEach(m=>{
+        //let wind = createVector(0.001, 0.001);
+        //m.applyForce(wind);
+        let f = attractor.attract(m);
+        m.applyForce(f);
+        m.update();
+        m.display();
+    });
+}
+</script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+<p>重力加速度</p>
+<p>\( \displaystyle F=\frac{G m_1 m_2}{r^2}\hat{r} \)</p>
+</body>
+</html>

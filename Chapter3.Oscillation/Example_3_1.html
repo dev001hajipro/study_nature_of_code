@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.10/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.10/addons/p5.dom.js"></script>
+</head>
+<body>
+<script>
+// https://processing.org/tutorials/transform2d/
+
+class Mover {
+    constructor(m = 1.0, x = 0, y = 0) {
+        this.mass = m;
+        this.position = createVector(x, y);
+        this.velocity = createVector(0, 0);
+        this.acceleration = createVector(0, 0);
+        this.angle = 0;
+        this.aVelocity = 0;
+        this.aAcceleration = 0;
+    }
+    applyForce(force) {
+        // F=M*A, A=F/M
+        let f = p5.Vector.div(force, this.mass);
+        this.acceleration.add(f);
+    }
+    update() {
+        this.velocity.add(this.acceleration);
+        this.position.add(this.velocity);
+
+        // ひとまず、外部のチカラを受けられるようにする。
+        this.aAcceleration =  this.acceleration.x / 10.0;
+        this.aVelocity += this.aAcceleration;
+        this.aVelocity = constrain(this.aVelocity, -0.1, 0.1); // limit
+        this.angle += this.aVelocity;
+
+        this.acceleration.mult(0);
+    }
+    display() {
+        //stroke(0);
+        //ellipse(this.position.x, this.position.y, this.mass*16, this.mass*16);
+        push();
+        fill(175);
+        stroke(0);
+        rectMode(CENTER);
+        translate(width/2, height/2);
+        rotate(this.angle);
+        line(-50, 0, 50, 0);
+        ellipse(50, 0, 8, 8);
+        ellipse(-50, 0, 8, 8);
+        pop();
+    }
+}
+let m;
+let angle = 0;
+let aVelocity = 0;
+let aAcceleration = 0.001;
+function setup() {
+    createCanvas(640, 360);
+    m = new Mover(1, width/2, height/2);
+}
+function draw() {
+    background(255);
+    fill(175);
+    stroke(0);
+    /*
+    rectMode(CENTER);
+    translate(width/2, height/2);
+    rotate(angle);
+    line(-50, 0, 50, 0);
+    ellipse(50, 0, 8, 8);
+    ellipse(-50, 0, 8, 8);
+    aVelocity += aAcceleration;
+    angle += aVelocity;
+    */
+    let wind = createVector(-0.1, 0);
+    m.applyForce(wind);
+    m.update();
+    m.display();
+}
+
+
+</script>
+</body>
+</html>

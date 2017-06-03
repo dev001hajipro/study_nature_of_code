@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>I.6 パーリンノイズ</title>
+</head>
+<body>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.9/p5.js"></script>
+<script>
+function setup() {
+    createCanvas(640, 320);
+    background(0);
+}
+let t = 0;
+let x = 0;
+function draw() {
+    x += 1;
+    t += 0.01;
+    stroke(255);
+    strokeWeight(10);
+    let n = noise(t);
+    let y = map(n, 0, 1, 0, height);
+    point(x, y);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.10/p5.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.10/addons/p5.dom.min.js"></script>
+<script>
+
+const scl = 10; // cell scale.
+const inc = 0.1;
+let cols, rows;
+let fr;
+function setup() {
+    createCanvas(200, 200);
+    cols = floor(width/scl);
+    rows = floor(height/scl);
+    fr = createP('');
+}
+function draw() {
+    background(255);
+    randomSeed(10);
+    let yoff = 0;
+    for (let y = 0; y < rows; y++) {
+        let xoff = 0;
+        for (let x = 0; x < cols; x++) {
+            let index = (width*y + x) * 4;
+            let angle = noise(xoff, yoff) * TWO_PI;
+            let v = p5.Vector.fromAngle(angle);
+            xoff += inc;
+            //rect(x * scl, y * scl, scl, scl);
+            push();
+            translate(x * scl, y *scl);
+            rotate(v.heading());
+            line(0, 0, scl, 0);
+            pop();
+        }
+        yoff += inc;
+    }
+
+    fr.html(floor(frameRate()));
+}
+</script>
+</body>
+</html>

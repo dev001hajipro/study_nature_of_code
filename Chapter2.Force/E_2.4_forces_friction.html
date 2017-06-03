@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.9/p5.js"></script>
+<script>
+// F=MxA Force=Mass*Acceleration
+
+class Mover {
+    constructor(m = 1.0, x = 0, y = 0) {
+        this.mass = m;
+        this.location = createVector(x, y);
+        this.acceleration = createVector(0, 0);
+        this.velocity = createVector(0, 0);
+    }
+    input() {
+    }
+
+    applyForce(force) {
+        let copiedForce = force.copy(); // 元の値は変えない。
+        copiedForce.div(this.mass);
+        this.acceleration.add(copiedForce);
+    }
+    
+    update() {
+        /*
+        let mouse = createVector(mouseX, mouseY);
+        let dir = p5.Vector.sub(mouse, this.location);
+        dir.normalize();
+        dir.mult(0.1);
+        this.acceleration = dir;
+        */
+        this.velocity.add(this.acceleration);
+        this.location.add(this.velocity);
+        this.acceleration.mult(0);
+    }
+
+    checkEdges() {
+        /*
+        if (this.location.y < 0) {
+            let bound = createVector(0.0, 1.0);
+            this.applyForce(bound);
+        }
+        if (this.location.y > height) {
+            let bound = createVector(0.0, -1.0);
+            this.applyForce(bound);
+        }
+        */
+        if (this.location.x > width) {
+            this.location.x = width;
+            this.velocity.x *= -1;
+        } else if (this.location.x < 0) {
+            this.velocity.x *= -1;
+            this.location.x = 0;
+        }
+
+        if (this.location.y > height) {
+            this.velocity.y *= -1;
+            this.location.y = height;
+        }
+    }
+
+    display() {
+        stroke(0);
+        fill(255);
+        ellipse(this.location.x, this.location.y, 16*this.mass, 16*this.mass);
+    }
+}
+var m;
+var movers;
+function setup() {
+    createCanvas(720, 360);
+    //m = new Mover();
+    movers = new Array(10).fill(0).map(n=>new Mover(random(0.1, 5), 0, 0));
+    console.log(movers)
+}
+function draw() {
+    background(220);
+
+    let wind = createVector(0.01, 0);
+    let gravity = createVector(0.0, 0.1);
+    for (var i = 0, len = movers.length; i < len; i++) {
+        let m = movers[i];
+        /*
+        if (mouseIsPressed) {
+            if (mouseButton==LEFT) {
+                m.applyForce(createVector(-0.1, 0.0));
+            }
+            if (mouseButton==RIGHT) {
+                m.applyForce(createVector(0.1, 0.0));
+            }
+        }
+        */
+        // 摩擦
+        let c = 0.01;
+        let friction = m.velocity.copy();
+        friction.mult(-1);
+        friction.normalize();
+        friction.mult(c);
+        m.applyForce(friction);
+        m.applyForce(wind);
+        m.applyForce(gravity);
+        //m.input();
+        m.checkEdges();
+        m.update();
+        m.display();
+    }
+}
+window.addEventListener('click', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    return;
+})
+window.addEventListener('contextmenu', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    return;
+})
+</script>
+</body>
+</html>

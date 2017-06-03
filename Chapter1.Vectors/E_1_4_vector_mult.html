@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>1.4 ベクトルの乗算</title>
+</head>
+<body>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.9/p5.js"></script>
+<script>
+function setup() {
+    createCanvas(480, 320);
+}
+function draw() {
+    background(240);
+    mouse = createVector(mouseX, mouseY);
+    center = createVector(width/2, height/2);
+    mouse.sub(center);
+    mouse.mult(0.5);
+
+    translate(width/2, height/2);
+    line(0, 0, mouse.x, mouse.y);
+}
+</script>
+</body>
+</html>

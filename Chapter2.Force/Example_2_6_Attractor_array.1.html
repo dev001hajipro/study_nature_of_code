@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>2.9 重力</title>
+</head>
+<body>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.9/p5.js"></script>
+<script>
+let G = 0.4;
+class Mover {
+    constructor(m = 0.1, x = 100, y = 100) {
+        this.mass = m;
+        this.acceleration = createVector(0,0);
+        this.velocity = createVector(0,0);
+        this.position = createVector(x, y);
+    }
+    applyForce(force) {
+        let newForce = p5.Vector.div(force, this.mass); // F=M*A, A=F/M
+        this.acceleration.add(newForce);
+    }
+    update() {
+        this.velocity.add(this.acceleration);
+        this.position.add(this.velocity);
+        this.acceleration.mult(0);
+    }
+    display() {
+        stroke(100);
+        //noStroke();
+        fill(230);
+        point(this.position.x, this.position.y);
+        ellipse(this.position.x, this.position.y, this.mass*16, this.mass*16);
+    }
+    checkEdges() {
+        /*
+        if (this.position.y > height) {
+            this.position.y = height;
+            this.velocity.y *= -1;
+        }
+        */
+    }
+}
+
+// 移動しない位置と質量のみを持つオブジェクト
+class Attractor {
+    constructor(m = 20, x = 0, y = 0) {
+        this.position = createVector(x, y);
+        this.mass = m;
+    }
+    display() {
+        stroke(0);
+        noStroke();
+        fill(175, 50);
+        ellipse(this.position.x+1, this.position.y+1, this.mass*2, this.mass*2);
+    }
+    constrain(d, min, max) {
+
+    }
+    attract(m) {
+        // 1.単位ベクトルrを求める(公式の一番右のr)
+        let force = p5.Vector.sub(this.position, m.position);
+        // 厳密な物理計算ではないため、あまり近くなると挙動が可笑しくなるので制限を儲ける。
+        let distance = constrain(force.mag(), 5.0, 25.0);
+        force.normalize();
+        // 2.他の変数を計算
+        // G * m1 * m2 / r^2
+        let strength = (G * this.mass * m.mass) / (distance * distance);
+        // 3. 1と2を掛ける
+        force.mult(strength);
+        return force;
+    }
+}
+let ms;
+let as;
+function setup() {
+    smooth();
+    createCanvas(640, 480);
+    ms = new Array(100).fill(0).map(n=>new Mover(random(0.1, 0.2), random(0, width), random(0, height)));
+//    a = new Attractor(50, width/2-200, height/2-200);
+    as = new Array(5).fill(0).map(n=>new Attractor(random(20, 80), random(0,width), random(0, height)));
+}
+function draw() {
+    background(255, 3);
+    //let gravity = createVector(0, 0.1);
+    //m.applyForce(gravity);
+    ms.forEach(m=>{
+        //let gravity = createVector(0.01, 0.001);
+        //m.applyForce(gravity);
+        //let gravity2 = createVector(-0.01, 0.001);
+        //m.applyForce(gravity2);
+
+        as.forEach(a=> {
+            let f = a.attract(m);
+            m.applyForce(f);
+        });
+        m.update();
+        m.display();
+        m.checkEdges();
+    });
+
+    as.forEach(a=> a.display());
+}
+
+</script>
+<p>
+<p>重力加速度(Gravitational acceleration)</p>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+<p>\(\displaystyle F=\frac{ G m_1 m_2 }{ r^2 }\hat{r} \)</p>
+</body>
+</html>

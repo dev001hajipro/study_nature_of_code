@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.10/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.10/addons/p5.dom.js"></script>
+</head>
+<body>
+<script>
+function setup() {
+    createCanvas(240, 240);
+}
+let r = 75;
+let theta = 0;
+function draw() {
+    background(240);
+    // 極座標(r, theta)から、デカルト座標(x,y)へ変換
+    let x = r * cos(theta);
+    let y = r * sin(theta);
+
+    noStroke();
+    fill(0);
+    ellipse(x+width/2, y+height/2, 16, 16);
+
+    theta += 0.01;
+}
+
+
+</script>
+</body>
+</html>

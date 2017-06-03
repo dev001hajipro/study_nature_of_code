@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>I.1 ランダムウォーカー</title>
+</head>
+<body>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.9/p5.js"></script>
+<script>
+class Walker {
+    constructor() {
+        this.x = width/2;
+        this.y = height/2;
+    }
+    step() {
+        let stepx = random(0, 1);
+        let stepy = random(0, 1);
+        this.x += stepx;
+        this.y += stepy;
+    }
+    display() {
+        stroke(0);
+        point(this.x, this.y);
+    }
+}
+var w;
+function setup() {
+    createCanvas(400, 400);
+    w = new Walker();
+    background(220);
+}
+function draw() {
+    w.step();
+    w.display();
+}
+</script>
+</body>
+</html>

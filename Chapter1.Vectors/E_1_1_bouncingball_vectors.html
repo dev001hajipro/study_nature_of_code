@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>1.1 ベクトル</title>
+</head>
+<body>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.9/p5.js"></script>
+<script>
+let location_;
+let velocity;
+function setup() {
+    createCanvas(480, 320);
+
+    location_ = createVector(100, 100);
+    velocity = createVector(1, 3.3);
+}
+function draw() {
+    background(240);
+
+    stroke(0);
+    fill(175);
+    location_.add(velocity);
+    if (location_.x < 0 || width < location_.x) {
+        velocity.x *= -1;
+    }
+    if (location_.y < 0 || height < location_.y) {
+        velocity.y *= -1;
+    }
+    ellipse(location_.x, location_.y, 50, 50);
+
+
+    noStroke();
+    fill(0);
+    text('PVector bouncingball', 10, 20);
+}
+</script>
+</body>
+</html>

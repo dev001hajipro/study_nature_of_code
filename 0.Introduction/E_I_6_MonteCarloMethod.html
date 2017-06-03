@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>E.I.6 ステップサイズにバラツキを持たせる</title>
+</head>
+<body>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.9/p5.js"></script>
+<script>
+
+class Walker {
+    constructor() {
+        this.x = width/2;
+        this.y = height/2;
+    }
+    step() {
+        let stepsize = random(0, 10);
+        let stepx = random(-stepsize, stepsize);
+        let stepy = random(-stepsize, stepsize);
+
+        this.x += stepx;
+        this.y += stepy;
+    }
+    show() {
+        stroke(0);
+        point(this.x,this.y);
+    }
+}
+var w;
+function setup() {
+    createCanvas(400, 400);
+    background(220);
+    w = new Walker();
+}
+function draw() {
+    w.step();
+    w.show();
+}
+</script>
+</body>
+</html>

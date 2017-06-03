@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>ランドスケープ</title>
+</head>
+<body>
+    <a href="https://github.com/CodingTrain/Rainbow-Code/blob/master/CodingChallenges/CC_11_PerlinNoiseTerrain_p5.js/sketch.js">https://github.com/CodingTrain/Rainbow-Code/blob/master/CodingChallenges/CC_11_PerlinNoiseTerrain_p5.js/sketch.js</a>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.9/p5.js"></script>
+<script>
+var t = 0;
+var tscale = 20;
+
+function setup() {
+    createCanvas(600, 600, WEBGL);
+    fill(200, 200, 200, 50);
+    //xmax = width/tscale;
+    xmax = 50;
+    //ymax = height/tscale;
+    ymax = 5;
+}
+var yoff = 0;
+function draw() {
+    background(0);
+    t += 1;
+    translate(-width/2, -250);
+    rotateX(-PI/3);
+    yoff = t;
+    
+    for (var y = 0; y < ymax; y++) {
+        beginShape(TRIANGLE_STRIP);
+        var xoff = 0;
+        for (var x = 0; x < xmax; x++) {
+            vertex(x*tscale, (y+0)*tscale, map(noise(xoff,yoff),0,1,-100,50));
+            vertex(x*tscale, (y+1)*tscale, map(noise(xoff,yoff +0.2),0,1,-100,50));
+            xoff += 0.2;
+        }
+        endShape(CLOSE);
+        yoff += 0.2;
+    }
+}
+</script>
+</body>
+</html>

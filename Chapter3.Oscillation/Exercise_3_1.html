@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.10/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.10/addons/p5.dom.js"></script>
+</head>
+<body>
+<script>
+    // https://processing.org/tutorials/transform2d/
+function setup() {
+    createCanvas(200, 200);
+}
+function draw() {
+    background(240);
+    let angle = radians(frameCount);
+    push();
+    translate(width/2, height/2);
+    rotate(angle);
+    stroke(0);
+    strokeWeight(1);
+    line(-50, 0, 50, 0);
+    ellipse(50,0, 8, 8);
+    ellipse(-50,0, 8, 8);
+    pop();
+}
+function e1(x, y) {
+    push();
+    stroke(50);
+    strokeWeight(2);
+    fill(150);
+    translate(x, y);
+    ellipse(0, 0, 20, 20);
+    pop();
+}
+
+
+function setHouse(x, y) {
+    triangle(x+15, y, x, y+15, x + 30, y+15);
+    rect(x, y+15, 30, 30);
+    rect(x+12, y+30, 10, 15);
+}
+
+function setHouse2(x, y) {
+    push();
+    translate(x, y);
+    triangle(15, 0, 0, 15, 30, 15);
+    rect(0, 15, 30, 30);
+    rect(30/3, 30, 10, 15);
+    pop();
+}
+
+</script>
+</body>
+</html>

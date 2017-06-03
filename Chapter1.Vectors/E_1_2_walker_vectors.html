@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>1.2 ベクトルとウォーカー</title>
+</head>
+<body>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/p5.js/0.5.9/p5.js"></script>
+<script>
+let location_;
+let velocity;
+
+class Walker {
+    constructor() {
+        this.location = createVector(100, 100);
+        this.velocity = createVector(0, 0);
+    }
+    step() {
+        let tx = map(noise(frameCount/1),0,1,-1,1);
+        let ty = map(noise(frameCount/10000),0,1,-1,1);
+        //this.dt.y = map(noise(frameCount/1000),0,1,-1,1);
+        this.velocity.x += tx;
+        this.velocity.y += ty;
+
+        if (this.location.x -25 <= 0) {
+            this.location.x = 25;
+            this.velocity.x *= -1;
+        }
+        if (this.location.x + 25 >= width) {
+            this.location.x = width -25;
+            this.velocity.x *= -1;
+        }
+        if (this.location.y -25 <= 0) {
+            this.location.y = 25;
+            this.velocity.y *= -1;
+        }
+        if (this.location.y + 25 >= height) {
+            this.location.y = height -25;
+            this.velocity.y *= -1;
+        }
+        this.location.add(this.velocity);
+    }
+    show() {
+        stroke(0);
+        fill(175);
+        ellipse(this.location.x, this.location.y, 50, 50);
+    }
+}
+let w;
+function setup() {
+    createCanvas(480, 320);
+    w = new Walker();
+}
+function draw() {
+    background(240);
+    w.step();
+    w.show();
+}
+</script>
+</body>
+</html>
