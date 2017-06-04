@@ -10,8 +10,8 @@
     "watch": "run-p serve"
 
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["p5.js", "nature of code"],
+  "author": "dev001hajipro",
   "license": "ISC",
   "devDependencies": {
     "browser-sync": "^2.18.11",
