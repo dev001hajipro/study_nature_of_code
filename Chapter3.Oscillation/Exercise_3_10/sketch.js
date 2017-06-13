@@ -26,6 +26,10 @@ class Wave {
             this.angle += this.aVelocity;
         }
     }
+    run() {
+        this.update();
+        this.display();
+    }
 }
 function setup() {
     createCanvas(800, 200);
@@ -35,9 +39,6 @@ function setup() {
 }
 function draw() {
     background(240,240,250);
-    w1.update();
-    w1.display();
-
-    w2.update();
-    w2.display();
+    w1.run();
+    w2.run();
 }

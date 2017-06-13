@@ -1,43 +1,43 @@
 /// <reference path="../../p5.global-mode.d.ts" />
-class Wave {
-    constructor(angle, aVelocity, 
-            x = 0, w = 100, 
-            size = 48, startAngle = 0) {
-        this.angle = angle;
-        this.aVelocity = aVelocity;
-        this.x = x;
-        this.w = w;
-        this.size = size;
-        this.startAngle = startAngle;
-    }
-    update() {
-        this.startAngle +=0.01;
-    }
-    display() {
-        this.angle = this.startAngle;
-        console.log(this.x, this.w, this.size/2);
-
-        for (let _x = this.x, mx = this.x + this.w; _x <= mx; _x += (this.size/2)) {
-            let y = map(sin(this.angle), -1, 1, 0, height);
-            //let y = map(noise(this.angle), 0, 1, 0, height);
-            fill(0, 20);
-            stroke(0, 150);
-            ellipse(_x, y, this.size, this.size);
-            this.angle += this.aVelocity;
-        }
-    }
-}
+// 周期 TWO_PIラジアン(360度)
+let amplitude = 20; // 振幅(pixel)
+let xspacing = 2;
+let period = 100; // 周期(フレーム)
+let dx1, dx2;
 function setup() {
     createCanvas(800, 200);
-    createP('Wave class');
-    w1 = new Wave(0, 0.30, 100, 400, 20);
-    w2 = new Wave(10, 0.31, 100, 450, 25);
+    // まだdxにdeltaはない。
+    dx1 = (TWO_PI / 180) * xspacing;
+    dx2 = (TWO_PI / 120) * xspacing;
+    dx3 = (TWO_PI / 300) * xspacing;
 }
+let theta = 0;
+let yvalues = [];
 function draw() {
-    background(240,240,250);
-    w1.update();
-    w1.display();
+    background(30);
 
-    w2.update();
-    w2.display();
+    yvalues = new Array(width/xspacing).fill(0);
+    theta += 0.02;
+    let x = theta;
+    for (let i = 0; i < yvalues.length; i++) {
+        yvalues[i] += cos(x) * 10;
+        x += dx1;
+    }
+    x = theta;
+    for (let i = 0; i < yvalues.length; i++) {
+        yvalues[i] += cos(x) * 20;
+        x += dx2;
+    }
+    x = theta;
+    for (let i = 0; i < yvalues.length; i++) {
+        yvalues[i] += sin(x) * 51;
+        x += dx3;
+    }
+
+    translate(0, height/2);
+    for (let x = 0; x < yvalues.length; x++) {
+        ellipse(x*xspacing, yvalues[x], 20, 20);
+    }
+    stroke(255);
+    fill(255);
 }

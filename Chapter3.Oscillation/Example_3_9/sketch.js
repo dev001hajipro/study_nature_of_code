@@ -1,8 +1,8 @@
 /// <reference path="../../p5.global-mode.d.ts" />
 let startAngle = 0;
-let aVelocity = 0.3;
+let aVelocity = 0.1;
 function setup() {
-    createCanvas(800, 200);
+    createCanvas(400, 200);
 }
 function draw() {
     background(240,240,250);
