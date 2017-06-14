@@ -1,8 +1,8 @@
 /// <reference path="../../p5.global-mode.d.ts" />
 class Particle {
-    constructor(pos) {
+    constructor(pos = createVector(0,0)) {
         this.position = pos;
-        this.velocity = createVector(0,0);
+        this.velocity = createVector(random(-0.3,0.3),random(-0.3,0.3));
         this.acceleration = createVector(0, 0);
         this.lifespan = 255;
         this.mass = 1;
@@ -36,8 +36,8 @@ class Particle {
         stroke(0, this.lifespan);
         fill(175, this.lifespan);
         rectMode(CENTER);
-        //ellipse(this.position.x, this.position.y, 8, 8);
-        rect(0, 0, 18, 18);
+        ellipse(0, 0, 16, 16);
+        //rect(0, 0, 18, 18);
         point(0, 0);
         pop();
     }
@@ -45,21 +45,34 @@ class Particle {
         this.update();
         this.display();
     }
-    isDead() { this.lifespan < 0.0; }
+    isDead() { return this.lifespan < 0.0; }
 }
-let p;
-let out;
+class ParticleSystem {
+    constructor(origin = createVector(width/2, 10)) {
+        this.ps = [];
+        this.origin = origin;
+    }
+    addParticle() {
+        this.ps.push(new Particle(this.origin.copy()));
+    }
+    run() {
+        this.ps.forEach((p)=>{
+            let v = createVector(0, 0.01);
+            p.applyForce(v);
+            p.run();
+        });
+        this.ps = this.ps.filter(p=>!p.isDead());
+        text('len:' + this.ps.length, 10, 10);
+    }
+}
+
+let ps;
 function setup() {
     createCanvas(640, 360);
-    p = new Particle(createVector(width/2, 10));
-    out = createP('alive');
+    ps = new ParticleSystem(createVector(width/2, 10));
 }
 function draw() {
     background(245);
-    let v = createVector(0.01, 0.01);
-    p.applyForce(v);
-    p.run();
-    if (p.isDead()) {
-        out.text('dead');
-    }
+    ps.addParticle();
+    ps.run();
 }
