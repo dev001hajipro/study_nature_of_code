@@ -1,4 +1,5 @@
 /// <reference path="../../p5.global-mode.d.ts" />
+// TODO スラスターの方向
 class Particle {
     constructor(pos = createVector(0,0)) {
         this.position = pos;
@@ -33,12 +34,12 @@ class Particle {
         push();
         translate(this.position.x,this.position.y);
         rotate(this.angle);
-        stroke(0, this.lifespan);
-        fill(175, this.lifespan);
+        stroke(200, this.lifespan);
+        fill(200, this.lifespan);
         rectMode(CENTER);
-        ellipse(0, 0, 16, 16);
+        ellipse(0, 0, map(this.lifespan, 0, 255, 5, 16), map(this.lifespan, 0, 255, 5, 16));
         //rect(0, 0, 18, 18);
-        point(0, 0);
+        //point(0, 0);
         pop();
     }
     run() {
@@ -53,8 +54,10 @@ class ParticleSystem {
         this.origin = origin;
         this.mouseMode = false;
     }
-    addParticle() {
-        this.ps.push(new Particle(this.origin.copy()));
+    addParticle(f) {
+        this.f = f;
+        let pos = this.origin.copy().add(this.f.copy().normalize().mult(10));
+        this.ps.push(new Particle(pos));
     }
     input() {
         if (mouseIsPressed) {
@@ -69,8 +72,7 @@ class ParticleSystem {
     run() {
         //this.input();
         this.ps.forEach((p)=>{
-            let v = createVector(0, 0.01);
-            p.applyForce(v);
+            p.applyForce(this.f);
             p.run();
         });
         this.ps = this.ps.filter(p=>!p.isDead());
@@ -106,12 +108,12 @@ class Spaceship {
         let x = r * cos(_angle);
         let y = r * sin(_angle);
         let f = createVector(x, y);
-        f.mult(0.05);
+        f.mult(0.01);
         console.log(x,y);
         this.applyForce(f);
 
         this.ps.origin = createVector(this.position.x, this.position.y);
-        this.ps.addParticle();
+        this.ps.addParticle(f.mult(-0.1));
     }
     applyForce(force) {
         // F=M*A, A=F/M
@@ -128,6 +130,7 @@ class Spaceship {
         this.aAcceleration = 0;
     }
     display() {
+        this.ps.run();
         push();
         stroke(0);
         fill(175);
@@ -143,8 +146,6 @@ class Spaceship {
         rotate(this.angle);
         triangle(0, -10, 10, 10, -10, 10);
         pop();
-
-        this.ps.run();
     }
 }
 let s;
@@ -155,7 +156,7 @@ function setup() {
     s.applyForce(wind);
 }
 function draw() {
-    background(245);
+    background(250);
 
     if (keyIsPressed) {
         //text(keyCode, 10, 10);
