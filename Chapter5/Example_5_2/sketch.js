@@ -73,6 +73,14 @@ class Box {
     killBody() {
         box2d.destroyBody(this.body);
     }
+    done() {
+        let pos = scaleToPixels(this.body.GetPosition());
+        if (pos.y > height+this.w*this.h) {
+            this.killBody();
+            return true;
+        }
+        return false;
+    }
 }
 let world;
 let boxes;
@@ -96,4 +104,5 @@ function draw() {
         
     boundaries.forEach((b)=>b.display());
     boxes.forEach((b)=> b.display());
+    // todo kill.
 }
