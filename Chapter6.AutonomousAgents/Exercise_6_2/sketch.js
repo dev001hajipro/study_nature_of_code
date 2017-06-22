@@ -75,6 +75,24 @@ class Target {
     constructor(x = random(0, width), y = random(0, height), m = 1) {
         this.mass = m;
         this.position = createVector(x, y);
+        this.velocity = createVector(0, 0);
+        this.acceleration = createVector(random(-1,1), random(-1,1));
+    }
+    update() {
+        this.velocity.add(this.acceleration);
+        this.position.add(this.velocity);
+        this.acceleration.mult(0);
+
+        if (this.position.y < 0) {
+            this.position.y = height;
+        } else if (this.position.y > height) {
+            this.position.y = 0;
+        }
+        if (this.position.x < 0) {
+            this.position.x = width;
+        } else if (this.position.x > width) {
+            this.position.x = 0;
+        }
     }
     display() {
         push();
@@ -96,11 +114,14 @@ function setup() {
 }
 function draw() {
     background(240);
-    targets.forEach((t)=>vehicle.escape(t.position));
+    targets.forEach((t)=>vehicle.seek(t.position));
     vehicle.update();
     vehicle.display();
 
-    targets.forEach((t)=>t.display());
+    targets.forEach((t)=> {
+        t.update();
+        t.display();
+    });
 
     if (mouseIsPressed) {
         
