@@ -45,7 +45,7 @@ function setup() {
     next[next.length/2] = 1;
     for (let y = 0; y < height; y++) {
         pri(next, y);
-        next = gen(next, 30);
+        next = gen(next, 110);
     }
 }
 
