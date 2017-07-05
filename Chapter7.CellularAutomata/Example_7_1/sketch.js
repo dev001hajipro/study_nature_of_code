@@ -1,15 +1,4 @@
 /// <reference path="../../p5.global-mode.d.ts" />
-function rule90(l,m,r) {
-    if (l == 0 && m == 0 && r == 0) return 0;
-    if (l == 0 && m == 0 && r == 1) return 1;
-    if (l == 0 && m == 1 && r == 0) return 0;
-    if (l == 0 && m == 1 && r == 1) return 1;
-    if (l == 1 && m == 0 && r == 0) return 1;
-    if (l == 1 && m == 0 && r == 1) return 0;
-    if (l == 1 && m == 1 && r == 0) return 1;
-    if (l == 1 && m == 1 && r == 1) return 0;
-    return 0;
-}
 const rstr = (s)=> s.split("").reverse().join("");
 
 function rule(n, l, m, r) {
