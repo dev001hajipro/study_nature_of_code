@@ -1,4 +1,5 @@
 /// <reference path="../../p5.global-mode.d.ts" />
+// TODO :まだ実装していない
 // LSystem カントール集合
 let current = "A";
 
