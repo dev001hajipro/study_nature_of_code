@@ -16,7 +16,6 @@ class DNA {
         return this;
     }
 }
-
 // ブループ(bloop)
 // パーリンノイズに従って動く。大きいものほど動きが遅く、小さいものほど速い。
 class Bloop {
@@ -51,14 +50,12 @@ class Bloop {
 
         if (this.position.x < 0) {
             this.position.x = width;
-        }
-        if (this.position.x > width) {
+        } else if (this.position.x > width) {
             this.position.x = 0;
         }
         if (this.position.y < 0) {
             this.position.y = height;
-        }
-        if (this.position.y > height) {
+        } else if (this.position.y > height) {
             this.position.y = 0;
         }
 
@@ -79,9 +76,7 @@ class Bloop {
         return this;
     }
     run() {
-        this.update();
-        this.display();
-        return this;
+        return this.update().display();
     }
     eat(foods) {
         let len = foods.length;
@@ -120,16 +115,13 @@ class World {
     } 
     run() {
         this.makeFood();
-        this.foods.forEach((v, i, a) => v.display());
-
-        this.bloops.forEach((b, i, a)=> {
-            this.foods = b.run().eat(this.foods);
-        });
-        // 生殖
-        let newBloops = this.bloops.map((v, i, a)=> v.reproduce()).reduce((p, c, i, a) => p.concat(c), []);
+        this.foods.forEach((v) => v.display());
+        this.bloops.forEach((b)=> this.foods = b.run().eat(this.foods));
+        // 無性生殖
+        let newBloops = this.bloops.map((v)=> v.reproduce()).reduce((p, c, i, a) => p.concat(c), []);
         this.bloops.concat(newBloops);
         // 死亡フラグが立っていたら、そこに生物を生成
-        this.bloops.filter((b)=>b.isDead()).forEach((v, i, a) => this.makeFood(v.position, 1.0));
+        this.bloops.filter((b)=>b.isDead()).forEach((v) => this.makeFood(v.position, 1.0));
         // 死亡フラグが立っていたら、それを除外して(Bloop死亡)に新たな配列を作成。
         this.bloops = this.bloops.filter((v)=>!v.isDead());
     }

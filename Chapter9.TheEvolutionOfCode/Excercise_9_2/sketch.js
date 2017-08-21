@@ -9,7 +9,7 @@ function newChar() {
     c = (c === 64) ? 32 : c; // @ mark to space.
     return String.fromCharCode(c);    
 }
-
+ 
 class DNA {
     constructor(n) {
         this.genes = Array.from({length: n}, (v, k)=> newChar());
@@ -19,6 +19,7 @@ class DNA {
     fitness(target) {
         let score = this.genes.reduce((p,c,i,a)=> c === target[i] ? ++p : p, 0);
         this._fitness = score / target.length;
+        console.log(this._fitness)
     }
     crossover(partner) {
         let child = new DNA(this.genes.length);
